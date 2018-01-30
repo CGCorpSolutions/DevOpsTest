@@ -1,0 +1,35 @@
+#Base BPA Server Image to use as a test
+
+FROM transworksftw/informix_base:1
+
+LABEL svcauthor="Cary Gerber" \
+      svcdescription="BPA Server Test Image" \
+      date="Jan 12, 2018" \
+      company="TransWorks" \
+      svcname="esqlc.bpa.sampleservice" \
+      prodline="idi,abf,tcs"
+
+# Volumes
+
+VOLUME ["/data/logs"]
+
+# Bootstrapping
+
+#RUN yum update -y
+COPY dir.list /tmp
+COPY twbootstrap.sh /tmp
+COPY twstart.sh /tmp
+RUN chmod 774 /tmp/twbootstrap.sh
+RUN chmod 775 /tmp/twstart.sh
+RUN [ "/tmp/twbootstrap.sh" ]
+
+# Variables
+
+ENV TMPINVOICES /data/tmp/invoices
+
+# Container Start
+
+ENTRYPOINT [ "/tmp/twstart.sh","some-service"]
+#CMD [ "-si", "/bin/ls" ]
+#CMD [ "-i" ]
+#CMD [ "-s", "some-other-service", "arg1", "arg2" ]
